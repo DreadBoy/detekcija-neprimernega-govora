@@ -1,0 +1,24 @@
+{
+  "name": "detekcija-neprimernega-govora",
+  "version": "0.0.0",
+  "description": "Detekcija neprimernega govora s pomočjo klasifikacije in primerjava z ročnimi metodami",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DreadBoy/detekcija-neprimernega-govora.git"
+  },
+  "keywords": [
+    "neprimerni",
+    "govor",
+    "klasifikacija"
+  ],
+  "author": "Matic Leva, Blaž Vantur, Danijel Cigula",
+  "license": "Apache License 2.0",
+  "bugs": {
+    "url": "https://github.com/DreadBoy/detekcija-neprimernega-govora/issues"
+  },
+  "homepage": "https://github.com/DreadBoy/detekcija-neprimernega-govora"
+}
