@@ -13,7 +13,7 @@ module.exports = new function Klasifikacija() {
 
     that.klasificiraj = function (primerni, neprimerni, test) {
 
-        //Pripravljen R funkcija
+        //Pripravljeni R funkciji
         var P = {
             primerni: PR(primerni.frekvenceTotal, primerni.frekvenceTotal + neprimerni.frekvenceTotal),
             neprimerni: PR(neprimerni.frekvenceTotal, primerni.frekvenceTotal + neprimerni.frekvenceTotal)
@@ -22,7 +22,7 @@ module.exports = new function Klasifikacija() {
         //testiraj vsaki stavek
         for (stavek in test.stavki) {
 
-            //tu boš sešeteval verjetnosti za vse besede v stavki
+            //tu boš sešeteval verjetnosti za vse besede v stavku
             var Pstavek = {
                 primerni: 0,
                 neprimerni: 0
@@ -36,7 +36,7 @@ module.exports = new function Klasifikacija() {
 
 
             besede
-                //izračunaj obe verjetnosti za besedo
+                //za vsako besedo izračunaj obe frekvenci
                 .map(function (beseda) {
                     var frekvenca = {
                         primerni: 0,
@@ -74,7 +74,7 @@ module.exports = new function Klasifikacija() {
                     Pstavek.neprimerni += P.neprimerni;
                 });
 
-            //pomnožim s faktorjem
+            //pomnoži s faktorjem
             //Pstavek.primerni *= primerni.frekvenceTotal / (primerni.frekvenceTotal + neprimerni.frekvenceTotal);
             //Pstavek.neprimerni *= neprimerni.frekvenceTotal / (primerni.frekvenceTotal + neprimerni.frekvenceTotal);
 
@@ -116,47 +116,8 @@ module.exports = new function Klasifikacija() {
 
         var F1 = 2 * (precision * recall) / (precision + recall);
 
-
-
         return F1;
     };
     
     return that;
 };
-
-function intersectionObjects2(a, b, areEqualFunction) {
-    var results = [];
-
-    for(var i = 0; i < a.length; i++) {
-        var aElement = a[i];
-        var existsInB = _.any(b, function(bElement) { return areEqualFunction(bElement, aElement); });
-
-        if(existsInB) {
-            results.push(aElement);
-        }
-    }
-
-    return results;
-}
-
-function intersectionObjects() {
-    var results = arguments[0];
-    var lastArgument = arguments[arguments.length - 1];
-    var arrayCount = arguments.length;
-    var areEqualFunction = _.isEqual;
-
-    if(typeof lastArgument === "function") {
-        areEqualFunction = lastArgument;
-        arrayCount--;
-    }
-
-    for(var i = 1; i < arrayCount ; i++) {
-        var array = arguments[i];
-        results = intersectionObjects2(results, array, areEqualFunction);
-        if(results.length === 0) break;
-    }
-
-    return results;
-}
-
-_.mixin({ 'intersectionObjects': intersectionObjects });
