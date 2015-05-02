@@ -1,31 +1,17 @@
 var mongoose = require('mongoose'),
     CommentModel = rekuire('database/CommentModel'),
-    async = require('async');
+    async = require('async'),
+    data = rekuire('database/data');
 
 var db = mongoose.connect('mongodb://jt:jt@kahana.mongohq.com:10016/pesek');
-
-var cache = new function Cache() {
-    var that = this;
-
-    that.test = {
-        primerni: [],
-        neprimerni: []
-    };
-    that.train = {
-        primerni: [],
-        neprimerni: []
-    };
-
-    return that;
-};
 
 module.exports = new function Database() {
     var that = this;
 
     that.getTrainData = function (callback) {
 
-        if (cache.train.neprimerni.length > 0 && cache.train.primerni.length > 0)
-            callback(null, cache.train);
+        if (data.train.neprimerni.stavki.length > 0 && data.train.primerni.stavki.length > 0)
+            callback(null, data.train);
 
         async.parallel([
                 function (callback) {
@@ -33,7 +19,7 @@ module.exports = new function Database() {
                         if (err)
                             callback(err);
                         else
-                            callback(null, data.slice(0, data.length / 3).map(function(comment){
+                            callback(null, data.slice(0, data.length * 2 / 3).map(function(comment){
                                 return comment.text;
                             }));
                     });
@@ -43,9 +29,25 @@ module.exports = new function Database() {
                         if (err)
                             callback(err);
                         else
-                            callback(null, data.slice(0, data.length / 3).map(function(comment){
+                            callback(null, data.slice(0, data.length * 2 / 3).map(function(comment){
                                 return comment.text;
                             }));
+                    });
+                },
+                function (callback) {
+                    CommentModel.find({type: 1}, function (err, data) {
+                        if (err)
+                            callback(err);
+                        else
+                            callback(null, data.slice(data.length * 2 / 3, data.length));
+                    });
+                },
+                function (callback) {
+                    CommentModel.find({type: -1}, function (err, data) {
+                        if (err)
+                            callback(err);
+                        else
+                            callback(null, data.slice(data.length * 2 / 3, data.length));
                     });
                 }
             ],
@@ -53,11 +55,22 @@ module.exports = new function Database() {
                 if (err)
                     callback(err);
                 else {
-                    cache.train.neprimerni = results[0];
-                    cache.train.primerni = results[1];
-                    callback(err, cache.train);
+                    data.train.neprimerni.stavki = results[0];
+                    data.train.primerni.stavki = results[1];
+                    var test = results[2].concat(results[3]);
+                    data.test.stavki = test.map(function (comment) {
+                        return comment.text;
+                    });
+                    test.forEach(function (comment) {
+                        data.test.comments[comment.text] = comment.type;
+                    });
+                    callback(err, data);
                 }
             });
+    };
+
+    that.export = function (callback) {
+        CommentModel.find({}, callback);
     };
     return that;
 };
